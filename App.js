@@ -1,10 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import RegistrationScreen from './Screen/RegistrationScreen';
 
 export default function App() {
   return (
+
     <View style={styles.container}>
-      <Text style={{ color: 'aqua', fontSize: 30, fontWeight: 'bold', textAlign: 'center', textTransform: 'uppercase'}}>Ох и ебала!Ебать тот день...</Text>
+      <RegistrationScreen />
       <StatusBar style="auto" />
     </View>
   );
@@ -13,8 +15,5 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
