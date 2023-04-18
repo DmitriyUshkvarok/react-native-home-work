@@ -11,6 +11,8 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native'
 import { useState } from 'react'
+import { authSignUpUser } from '../redux/auth/authOperations'
+import { useDispatch } from 'react-redux'
 
 const initialState = {
   login: '',
@@ -18,15 +20,22 @@ const initialState = {
   password: '',
 }
 
-const RegistrationScreen = () => {
+const RegistrationScreen = ({ navigation }) => {
   const [auth, setAuth] = useState(initialState)
   const [showPassword, setShowPassword] = useState(true)
   const [isFocusedLogin, setIsFocusedLogin] = useState(false)
   const [isFocusedEmail, setIsFocusedEmail] = useState(false)
   const [isFocusedPassword, setIsFocusedPassword] = useState(false)
 
+  const dispatch = useDispatch()
+
   const toggleShowPassword = () => {
     setShowPassword((prevState) => !prevState)
+  }
+
+  const hendleSubmit = () => {
+    dispatch(authSignUpUser(auth))
+    setAuth(initialState)
   }
 
   return (
@@ -36,7 +45,7 @@ const RegistrationScreen = () => {
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <KeyboardAvoidingView
           behavior={Platform.OS == 'ios' ? 'padding' : null}
-          keyboardVerticalOffset={Platform.OS == 'ios' ? 0 : 50}
+          keyboardVerticalOffset={Platform.OS == 'ios' ? -70 : 50}
           style={{ flex: 1 }}>
           <View style={{ flex: 1, justifyContent: 'flex-end' }}>
             <View style={styles.form}>
@@ -44,7 +53,7 @@ const RegistrationScreen = () => {
                 <Text style={styles.registrTitle}>Регистрация</Text>
               </View>
               <View style={styles.registrInputWrapper}>
-                <View>
+                <View style={styles.fedbackFormGroup}>
                   <TextInput
                     style={[
                       styles.inputLogRegistr,
@@ -62,7 +71,7 @@ const RegistrationScreen = () => {
                     value={auth.login}
                   />
                 </View>
-                <View>
+                <View style={styles.fedbackFormGroup}>
                   <TextInput
                     style={[
                       styles.inputLogRegistr,
@@ -110,12 +119,14 @@ const RegistrationScreen = () => {
                 </View>
                 <TouchableOpacity
                   style={styles.btnRegister}
-                  onPress={() => console.log(auth)}>
+                  onPress={() => hendleSubmit()}>
                   <Text style={styles.btnTitle} activeOpacity={0.7}>
                     Зарегистрироваться
                   </Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.btnLogIn}>
+                <TouchableOpacity
+                  style={styles.btnLogIn}
+                  onPress={() => navigation.navigate('LogIn')}>
                   <Text style={styles.btnTitleLogIn} activeOpacity={0.7}>
                     Уже есть аккаунт? Войти
                   </Text>
@@ -143,8 +154,11 @@ const styles = StyleSheet.create({
     paddingTop: 92,
     paddingBottom: 45,
   },
+  fedbackFormGroup: {
+    marginBottom: 16,
+  },
   registrTitle: {
-    // fontFamily: "Medium",
+    fontFamily: 'Medium',
     fontSize: 30,
     fontWeight: 500,
     lineHeight: 35,
@@ -157,7 +171,6 @@ const styles = StyleSheet.create({
     marginLeft: 'auto',
     marginRight: 'auto',
     marginBottom: 45,
-    gap: 16,
   },
   passwordInputWrapper: {
     position: 'relative',
@@ -179,7 +192,7 @@ const styles = StyleSheet.create({
   btnRegister: {
     backgroundColor: '#FF6C00',
     borderRadius: 100,
-    // fontFamily: "Regular",
+    fontFamily: 'Regular',
     height: 50,
     alignItems: 'center',
     justifyContent: 'center',
@@ -197,7 +210,7 @@ const styles = StyleSheet.create({
   },
   btnTitleLogIn: {
     color: '#1B4371',
-    // fontFamily: 'Roboto',
+    fontFamily: 'Regular',
     fontSize: 16,
     lineHeight: 19,
   },

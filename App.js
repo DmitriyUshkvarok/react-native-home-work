@@ -1,19 +1,21 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import RegistrationScreen from './Screen/RegistrationScreen';
+import { useFonts } from 'expo-font'
+import { Provider } from 'react-redux'
+import { store } from './redux/store'
+import Main from './Components/Main'
 
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    Regular: require('./assets/fonts/Roboto-Regular.ttf'),
+    Medium: require('./assets/fonts/Roboto-Medium.ttf'),
+    Bold: require('./assets/fonts/Roboto-Bold.ttf'),
+  })
+
+  if (!fontsLoaded) {
+    return null
+  }
   return (
-
-    <View style={styles.container}>
-      <RegistrationScreen />
-      <StatusBar style="auto" />
-    </View>
-  );
+    <Provider store={store}>
+      <Main />
+    </Provider>
+  )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
