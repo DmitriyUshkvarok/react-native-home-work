@@ -1,8 +1,12 @@
-import { initializeApp } from 'firebase/app'
+import { getApp, getApps, initializeApp } from 'firebase/app'
+import { getStorage } from 'firebase/storage'
+import { getFirestore } from 'firebase/firestore'
+import { getDatabase } from 'firebase/database'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBDLi9tseOckLDZHXBv_qXU4ZVDyt_GHYc',
   authDomain: 'r-n-h-w.firebaseapp.com',
+  databaseURL: 'https://r-n-h-w-default-rtdb.firebaseio.com',
   projectId: 'r-n-h-w',
   storageBucket: 'r-n-h-w.appspot.com',
   messagingSenderId: '692829675463',
@@ -11,3 +15,6 @@ const firebaseConfig = {
 }
 
 export const app = initializeApp(firebaseConfig)
+export const db = getDatabase(app)
+export const storage = getStorage(app)
+export const firestore = getFirestore(app)

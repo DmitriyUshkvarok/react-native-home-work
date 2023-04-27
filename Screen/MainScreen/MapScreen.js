@@ -1,8 +1,8 @@
-import React from 'react'
 import { View, StyleSheet } from 'react-native'
 import MapView, { Marker } from 'react-native-maps'
 
-const MapScreen = () => {
+const MapScreen = ({ route }) => {
+  const { latitude, longitude } = route.params.location
   return (
     <View style={styles.container}>
       <MapView

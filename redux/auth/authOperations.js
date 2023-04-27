@@ -60,7 +60,6 @@ const authStateChangeUser = () => async (dispatch) => {
       const userUpdateProfile = {
         login: user.displayName,
         userId: user.uid,
-        // userAvatar: user.photoURL,
         // userEmail: user.email,
       }
 

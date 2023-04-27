@@ -8,39 +8,69 @@ import {
 } from 'react-native'
 import { Camera } from 'expo-camera'
 import { useState, useEffect } from 'react'
+import { useSelector } from 'react-redux'
 import { Feather, SimpleLineIcons, AntDesign } from '@expo/vector-icons'
 import * as Location from 'expo-location'
+import { storage } from '../../firebase/config'
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { firestore } from '../../firebase/config'
+import { collection, addDoc } from 'firebase/firestore'
 
 const CreatePostsScreen = ({ navigation }) => {
   const [cameraRef, setCameraRef] = useState(null)
   const [photo, setPhoto] = useState('')
+  const [comment, setComment] = useState('')
   const [location, setLocation] = useState(null)
+  const [locationMessage, setLocationMessage] = useState('')
+
+  const { userId, login } = useSelector((state) => state.auth)
+
+  useEffect(() => {
+    ;(async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync()
+      if (status !== 'granted') {
+        console.log('Permission to access location was denied')
+      }
+    })()
+  }, [])
 
   const takePhotoCamera = async () => {
-    const { uri } = await cameraRef.takePictureAsync()
-    const location = await Location.getCurrentPositionAsync()
-    setPhoto(uri)
+    const photo = await cameraRef.takePictureAsync()
+    const locationPhoto = await Location.getCurrentPositionAsync()
+    setLocation(locationPhoto)
+    console.log(photo.uri)
+    setPhoto(photo.uri)
   }
 
-  // useEffect(() => {
-  //   ;(async () => {
-  //     let { status } = await Location.requestForegroundPermissionsAsync()
-  //     if (status !== 'granted') {
-  //       console.log('Permission to access location was denied')
-  //       return
-  //     }
+  const sendPhoto = async () => {
+    uploadPostToServer(photo)
+    navigation.navigate('Posts', { photo })
+  }
 
-  //     let location = await Location.getCurrentPositionAsync({})
-  //     setLocation(location)
-  //     const coords = {
-  //       latitude: location.coords.latitude,
-  //       longitude: location.coords.longitude,
-  //     }
-  //   })()
-  // }, [])
+  const uploadPhotoToServer = async () => {
+    const response = await fetch(photo)
+    const file = await response.blob()
+    const uniquePostId = Date.now().toString()
+    const storageRef = await ref(storage, `postImage/${uniquePostId}`)
+    const uploadPhoto = await uploadBytes(storageRef, file)
+    const takePhoto = await getDownloadURL(uploadPhoto.ref)
 
-  const sendPhoto = () => {
-    navigation.navigate('Home', { photo })
+    return takePhoto
+  }
+
+  const uploadPostToServer = async () => {
+    const photo = await uploadPhotoToServer()
+    try {
+      const docRef = await addDoc(collection(firestore, 'posts'), {
+        photo,
+        location,
+        comment,
+        userId,
+        login,
+      })
+    } catch (e) {
+      console.error('Error adding document: ', e)
+    }
   }
 
   return (
@@ -71,6 +101,7 @@ const CreatePostsScreen = ({ navigation }) => {
       </View>
       <View style={styles.inputNameWrapper}>
         <TextInput
+          onChangeText={setComment}
           style={styles.inputName}
           placeholder="Название..."></TextInput>
       </View>
@@ -88,7 +119,11 @@ const CreatePostsScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
       <TouchableOpacity
-        style={styles.btnPublicationWrapper}
+        style={
+          locationMessage && photo && message
+            ? styles.btnPublicationWrapper
+            : styles.disBtn
+        }
         onPress={sendPhoto}>
         <Text style={styles.btnPublicationText}>Опубликовать</Text>
       </TouchableOpacity>
@@ -167,6 +202,13 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     lineHeight: 19,
+  },
+  disBtn: {
+    backgroundColor: '#BDBDBD',
+    height: 51,
+    borderRadius: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   btnDeleteWrapper: {
     width: 70,

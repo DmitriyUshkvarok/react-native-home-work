@@ -1,14 +1,12 @@
 import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { Ionicons } from '@expo/vector-icons'
 import RegistrationScreen from './Screen/RegistrationScreen'
 import LoginScreen from './Screen/LoginScreen'
-import ProfileScreen from './Screen/MainScreen/ProfileScreen'
-import PostsScreen from './Screen/MainScreen/PostsScreen'
-import CreatePostsScreen from './Screen/MainScreen/CreatePostsScreen'
+import Home from './Screen/MainScreen/Home'
+import MapScreen from './Screen/MainScreen/MapScreen'
+import CommentsScreen from './Screen/MainScreen/CommentsScreen'
 
-const MainTab = createBottomTabNavigator()
+const MainStack = createStackNavigator()
 const AuthStack = createStackNavigator()
 
 const useRoute = (isAuth) => {
@@ -29,38 +27,32 @@ const useRoute = (isAuth) => {
     )
   }
   return (
-    <MainTab.Navigator tabBarOptions={{ showLabel: false }}>
-      <MainTab.Screen
-        name="PostsScreen"
-        component={PostsScreen}
+    <MainStack.Navigator initialRouteName="Home">
+      <MainStack.Screen
         options={{
           headerShown: false,
-          tabBarIcon: ({ focused, color, size }) => (
-            <Ionicons name="ios-grid-outline" size={size} color={color} />
-          ),
+          tabBarShowLabel: false,
         }}
+        name="Home"
+        component={Home}
       />
-      <MainTab.Screen
-        name="CreatePostsScreen"
-        component={CreatePostsScreen}
+      <MainStack.Screen
         options={{
-          headerShown: false,
-          tabBarIcon: ({ focused, color, size }) => (
-            <Ionicons name="add-outline" size={size} color={color} />
-          ),
+          headerTitleAlign: 'center',
+          title: 'Коментарии',
         }}
+        name="Comments"
+        component={CommentsScreen}
       />
-      <MainTab.Screen
-        name="ProfileScreen"
-        component={ProfileScreen}
+      <MainStack.Screen
         options={{
-          headerShown: false,
-          tabBarIcon: ({ focused, color, size }) => (
-            <Ionicons name="person-outline" size={size} color={color} />
-          ),
+          headerTitleAlign: 'center',
+          title: 'Карта',
         }}
+        name="Map"
+        component={MapScreen}
       />
-    </MainTab.Navigator>
+    </MainStack.Navigator>
   )
 }
 export default useRoute

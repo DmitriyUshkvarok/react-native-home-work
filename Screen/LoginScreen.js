@@ -11,8 +11,8 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native'
 import { useState } from 'react'
-// import { useDispatch } from 'react-redux'
-// import { authSignInUser } from '../redux/auth/authOperations'
+import { useDispatch } from 'react-redux'
+import { authSignInUser } from '../redux/auth/authOperations'
 
 const initialState = {
   email: '',
@@ -24,14 +24,15 @@ const LoginScreen = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(true)
   const [isFocusedEmail, setIsFocusedEmail] = useState(false)
   const [isFocusedPassword, setIsFocusedPassword] = useState(false)
+  const dispatch = useDispatch()
 
   const toggleShowPassword = () => {
     setShowPassword((prevState) => !prevState)
   }
 
-  // const hendleSubmit = () => {
-  //   dispatch(authSignInUser(auth))
-  // }
+  const hendleSubmit = () => {
+    dispatch(authSignInUser(auth))
+  }
 
   return (
     <ImageBackground
@@ -94,8 +95,9 @@ const LoginScreen = ({ navigation }) => {
                     <Text style={styles.showPasswordTitle}>Показать</Text>
                   </TouchableOpacity>
                 </View>
-                <TouchableOpacity style={styles.btnLogIn}>
-                  {/* onPress={() => hendleSubmit()} */}
+                <TouchableOpacity
+                  style={styles.btnLogIn}
+                  onPress={() => hendleSubmit()}>
                   <Text style={styles.btnTitle} activeOpacity={0.7}>
                     Войти
                   </Text>

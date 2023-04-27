@@ -1,30 +1,61 @@
-import React, { useEffect, useState } from 'react'
-import { View, StyleSheet, FlatList, Image, Text } from 'react-native'
-// import { createStackNavigator } from '@react-navigation/stack'
-// import { NativeScreen } from 'react-native-screens'
+import { View, StyleSheet, TouchableOpacity } from 'react-native'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { MaterialIcons, Ionicons } from '@expo/vector-icons'
+import PostsScreen from './PostsScreen'
+import CreatePostsScreen from './CreatePostsScreen'
+import ProfileScreen from './ProfileScreen'
+import { authSignOutUser } from '../../redux/auth/authOperations'
+import { useDispatch } from 'react-redux'
 
-const Home = ({ navigation, route }) => {
-  const [posts, setPosts] = useState([])
+const MainTab = createBottomTabNavigator()
 
-  useEffect(() => {
-    if (route.params) {
-      setPosts((prevState) => [...prevState, route.params])
-    }
-  }, [route.params])
+const Home = () => {
+  const dispatch = useDispatch()
+  const signOut = () => {
+    dispatch(authSignOutUser())
+  }
+
   return (
     <View style={styles.container}>
-      <FlatList
-        data={posts}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <View style={{ marginBottom: 10 }}>
-            <Image
-              source={{ uri: item.photo }}
-              style={{ marginHorizontal: 10, height: 200 }}
-            />
-          </View>
-        )}
-      />
+      <MainTab.Navigator tabBarOptions={{ showLabel: false }}>
+        <MainTab.Screen
+          options={{
+            tabBarShowLabel: false,
+            headerTitleAlign: 'center',
+            title: 'Публикации',
+            headerRight: () => (
+              <TouchableOpacity onPress={signOut} style={styles.BtnlogOut}>
+                <MaterialIcons name="logout" size={24} color="black" />
+              </TouchableOpacity>
+            ),
+            tabBarIcon: ({ focused, color, size }) => (
+              <Ionicons name="ios-grid-outline" size={size} color={color} />
+            ),
+          }}
+          name="Posts"
+          component={PostsScreen}
+        />
+        <MainTab.Screen
+          name="CreatePostsScreen"
+          component={CreatePostsScreen}
+          options={{
+            headerShown: false,
+            tabBarIcon: ({ focused, color, size }) => (
+              <Ionicons name="add-outline" size={size} color={color} />
+            ),
+          }}
+        />
+        <MainTab.Screen
+          name="ProfileScreen"
+          component={ProfileScreen}
+          options={{
+            headerShown: false,
+            tabBarIcon: ({ focused, color, size }) => (
+              <Ionicons name="person-outline" size={size} color={color} />
+            ),
+          }}
+        />
+      </MainTab.Navigator>
     </View>
   )
 }
